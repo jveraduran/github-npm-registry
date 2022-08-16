@@ -1,6 +1,6 @@
 {
   "name": "@jveraduran/github-npm-registry-fe",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
