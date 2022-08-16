@@ -1,0 +1,23 @@
+name: Create and publish NPM Package
+on:
+  release:
+    types: [published]
+
+jobs:
+  Publish-NPM-Package:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache-dependency-path: package-lock.json
+          registry-url: https://npm.pkg.github.com
+      - run: npm install
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.PAT_GITHUB_TOKEN}}
