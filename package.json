@@ -1,7 +1,10 @@
 {
-  "name": "pkg-eslint",
-  "version": "0.0.1",
+  "name": "@jveraduran/github-npm-registry-fe",
+  "version": "1.0.3",
   "description": "",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "main": "index.js",
   "scripts": {
     "prepare": "husky install"
