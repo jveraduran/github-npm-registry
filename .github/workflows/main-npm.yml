@@ -1,0 +1,12 @@
+name: Github NPM Registry
+on:
+  pull_request: 
+    branches: [develop, staging, master]
+    types: [opened, synchronize]
+
+jobs:
+  NPM-Audit:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/npm-audit.yml
+    secrets:
+      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}

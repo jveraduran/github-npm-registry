@@ -1,0 +1,36 @@
+name: Docker SBOM
+on:
+  workflow_call:
+    secrets:
+      PAT_GITHUB_TOKEN:
+        required: true
+        description: Github Token
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  Docker-sbom:
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Set up Docker Build
+      uses: docker/setup-buildx-action@v1
+    
+    - name: Log in to the Container registry
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.PAT_GITHUB_TOKEN }}
+
+    - name: Build local container
+      uses: docker/build-push-action@v2
+      with:
+        tags: sbom/image:latest
+        push: false
+        load: true
+
+    - uses: anchore/sbom-action@v0
+      with:
+        image: sbom/image:latest

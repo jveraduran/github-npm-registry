@@ -1,8 +1,10 @@
-name: Github Actions Linter
+name: NPM Audit
 on:
-  pull_request: 
-    branches: [develop, staging, master]
-    types: [opened, synchronize]
+  workflow_call:
+    secrets:
+      PAT_GITHUB_TOKEN:
+        required: true
+        description: Github Token
 
 jobs:
   npm-audit:
