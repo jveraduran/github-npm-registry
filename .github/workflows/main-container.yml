@@ -1,0 +1,52 @@
+name: Github Container Registry
+on:
+  pull_request: 
+    branches: [develop, staging, master]
+    types: [opened, synchronize]
+
+jobs:
+  Action-Linter:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/action-linter.yml
+
+  Trufflehog:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/trufflehog.yml
+    needs: [Action-Linter]
+
+  Docker-Linter:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/docker-linter.yml
+    needs: [Action-Linter]
+
+  Security-Anchore:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/anchore.yml
+    needs: [Trufflehog, Action-Linter, Docker-Linter]
+    secrets:
+      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
+  
+  Security-Snyk:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/snyk.yml
+    needs: [Trufflehog, Action-Linter, Docker-Linter]
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
+  
+  Security-Prisma:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/PrismaCloud.yml
+    needs: [Trufflehog, Action-Linter, Docker-Linter]
+    secrets:
+      pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
+      pcc_user: ${{ secrets.PCC_USER }}
+      pcc_pass: ${{ secrets.PCC_PASS }}
+      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
+  
+  Docker-SBOM:
+    if: github.event_name != 'opened'
+    uses: ./.github/workflows/docker-sbom.yml
+    needs: [Security-Anchore, Security-Snyk]
+    secrets:
+      PAT_GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}

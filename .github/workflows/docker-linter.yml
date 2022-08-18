@@ -1,0 +1,15 @@
+name: Github Actions - Docker Linter
+on:
+  workflow_call:
+
+jobs:
+  Docker-lint:
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: lint
+      uses: ghe-actions/dockerfile-validator@v1
+      with:
+        dockerfile: 'Dockerfile'
+        lint: 'dockerlint'
